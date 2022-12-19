@@ -18,9 +18,18 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "incremental": true,
+    "experimentalDecorators": true,
+    "useDefineForClassFields": true,
+    "paths": {
+      "@components/*": ["./components/*"],
+      // "@model/*": ["./model/*"]
+    }
   },
   "include": [
-    "src"
-  ]
+    "src",
+    "**/*.ts", "**/*.tsx"
+  ],
+  "exclude": ["node_modules"]
 }
