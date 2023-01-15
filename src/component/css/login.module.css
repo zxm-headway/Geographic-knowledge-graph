@@ -1,0 +1,43 @@
+#myLogin {
+  height: 100vh;
+  background-color: #2b4b6b;
+}
+#myLogin .login_container {
+  position: absolute;
+  width: 450px;
+  height: 300px;
+  background-color: #fff;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 5px 10px 15px 5px rgba(0, 0, 0, 0.6);
+}
+#myLogin .login_container .avatar_container {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 130px;
+  height: 130px;
+  padding: 10px;
+  border-top: 1px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ddd;
+  background-color: #fff;
+}
+#myLogin .login_container .avatar_container img {
+  border: 1px solid #fff;
+  border-radius: 50%;
+  width: 100%;
+  background-color: #eee;
+}
+#myLogin .login_container .form_login {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+#myLogin .login_container .form_login .btns {
+  display: flex;
+  justify-content: space-around;
+}

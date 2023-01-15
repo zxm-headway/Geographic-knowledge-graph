@@ -7,7 +7,7 @@ import {
 import { Menu } from 'antd';
 import { useHistory } from 'react-router-dom';
 import type { MenuProps } from 'antd/es/menu';
-import React from 'react';
+import React, { useState } from 'react';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -30,23 +30,35 @@ const items: MenuItem[] = [
   getItem('Search', '/home/kgsearch', <CalendarOutlined />),
   getItem('Navigation Two', 'sub1', <AppstoreOutlined />, [
     getItem('搜索图', '/home/searchgragh'),
-    getItem('Option 4', '4'),
+    getItem('地点查询', '/home/classification'),
     getItem('Submenu', 'sub1-2', null, [getItem('Option 5', '5'), getItem('Option 6', '6')]),
   ]),
-  getItem('Navigation Three', 'sub2', <SettingOutlined />, [
-    getItem('Option 7', '7'),
-    getItem('Option 8', '8'),
-    getItem('Option 9', '9'),
-    getItem('Option 10', '10'),
+  getItem('算法', 'sub2', <SettingOutlined />, [
+    getItem('知识图扩展', '/home/extensiongrangh'),
+    getItem('更改图谱', '/home/domainmap'),
+    getItem('实验性组件', '/home/trycoponent'),
+    getItem('算法2', '10'),
+    getItem('算法3', '11'),
+    getItem('算法4', '12'),
   ]),
 
 ];
 
 const KgMenu: React.FC = (props) => {
-  
-  const history = useHistory();
 
-  const pageJump  = (e:any) => {
+  const history = useHistory();
+  const rootSubmenuKeys = ['sub1', 'sub2',];
+  const [openKeys, setOpenKeys] = useState(['sub1']);
+  const onOpenChange = (keys: any) => {
+    const latestOpenKey = keys.find((key: any) => openKeys.indexOf(key) === -1);
+    if (rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+      setOpenKeys(keys);
+    } else {
+      setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+    }
+  };
+
+  const pageJump = (e: any) => {
     console.log(e.key)
     history.push(e.key);
   };
@@ -56,8 +68,8 @@ const KgMenu: React.FC = (props) => {
 
   return (
     <>
-     
-      
+
+
       <Menu
         style={{ width: '100%' }}
         defaultSelectedKeys={['1']}
@@ -65,7 +77,9 @@ const KgMenu: React.FC = (props) => {
         mode={'inline'}
         theme={'dark'}
         items={items}
-        onClick={(e)=>{
+        onOpenChange={onOpenChange}
+        openKeys={openKeys}
+        onClick={(e) => {
           pageJump(e)
         }}
       />

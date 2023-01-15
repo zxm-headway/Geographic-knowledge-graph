@@ -1,4 +1,8 @@
-import { action, makeObservable, observable } from "mobx";
+import { action, makeObservable, observable, configure } from "mobx";
+
+configure({
+  enforceActions: 'always'
+})
 
 interface IFilter {
   keyword: string;
@@ -19,6 +23,10 @@ class FilterModel {
       entities: observable,
       toggleCollapsed: action,
       toggleExpand: action,
+      updateKeyword: action,
+      selectEntities: action,
+
+
     });
   }
 

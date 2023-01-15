@@ -42,7 +42,7 @@ import Checkbox from "antd/lib/checkbox/Checkbox";
 import MyShowInfo from "../model/showCluster";
 
 const { louvain, findShortestPath } = Algorithm;
-interface CustomGraphProps {}
+interface CustomGraphProps { }
 
 const CustomGraph: React.FC<CustomGraphProps> = observer(() => {
   const model = useContext(GraphModelContext);
@@ -212,9 +212,8 @@ const CustomGraph: React.FC<CustomGraphProps> = observer(() => {
       const arrowWidth = Math.max(size / 2 + 2, 3);
       const arrowLength = 10;
       const arrowBeging = targetNode.size + arrowLength;
-      let arrowPath: any = `M ${arrowBeging},0 L ${
-        arrowBeging + arrowLength
-      },-${arrowWidth} L ${arrowBeging + arrowLength},${arrowWidth} Z`;
+      let arrowPath: any = `M ${arrowBeging},0 L ${arrowBeging + arrowLength
+        },-${arrowWidth} L ${arrowBeging + arrowLength},${arrowWidth} Z`;
       let d = targetNode.size / 2 + arrowLength;
       if (edge.source === edge.target) {
         edge.type = "loop";
@@ -240,11 +239,11 @@ const CustomGraph: React.FC<CustomGraphProps> = observer(() => {
         lineDash,
         endArrow: arrowPath
           ? {
-              path: arrowPath,
-              d,
-              fill: stroke,
-              strokeOpacity: 0,
-            }
+            path: arrowPath,
+            d,
+            fill: stroke,
+            strokeOpacity: 0,
+          }
           : false,
       };
       edge.labelCfg = {
@@ -1290,10 +1289,10 @@ const CustomGraph: React.FC<CustomGraphProps> = observer(() => {
 
   return (
     <>
-    <AllContainer>
-      <GraphContainer ref={container}></GraphContainer>
+      <AllContainer>
+        <GraphContainer ref={container}></GraphContainer>
 
-     
+
         <LegendGroup size={2}>
           {(clusterNodeData?.nodes ?? []).map((cluster, idx) => {
             return (
@@ -1321,7 +1320,7 @@ const CustomGraph: React.FC<CustomGraphProps> = observer(() => {
             );
           })}
         </LegendGroup>
-        </AllContainer>
+      </AllContainer>
     </>
   );
 });
@@ -1339,7 +1338,7 @@ const AllContainer = styled.div`
 `
 
 const GraphContainer = styled.div`
-  height: 55vh;
+  height: 60vh;
   width: 100%;
 `;
 

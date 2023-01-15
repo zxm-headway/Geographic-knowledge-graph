@@ -1,6 +1,6 @@
 import { Layout } from "antd";
 import { useMemo } from "react";
-import { DetailSider} from "../../../../component/homeIndex/DetailSider";
+import { DetailSider } from "../../../../component/homeIndex/DetailSider";
 import { CustomGraph } from "../../../../component/homeIndex/Graph/index";
 import { Filter } from "../../../../component/homeIndex/Search/index";
 import FilterModel from "../../../../component/homeIndex/model/filter";
@@ -16,23 +16,24 @@ const { Header, Content } = Layout;
 
 const KgPages: React.FC = observer(() => {
   const graphModel = useMemo(() => new GraphModel(), []);
-  const model = useMemo(() => new FilterModel(), []); return (
+  const model = useMemo(() => new FilterModel(), []);
+  return (
     <GraphModelContext.Provider value={graphModel}>
-    
-        <Layout>
-          <Filter />
-          <Layout >
 
-            <Content >
-              <AlgorithmSetting />
-              <CustomGraph />
-            </Content>
+      <Layout>
+        <Filter />
+        <Layout >
 
-            <DetailSider/>
-            
-          </Layout>
+          <Content >
+
+            <CustomGraph />
+          </Content>
+
+          <DetailSider />
+
         </Layout>
-     
+      </Layout>
+
     </GraphModelContext.Provider>
   );
 });

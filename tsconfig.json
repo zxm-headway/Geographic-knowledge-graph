@@ -23,13 +23,18 @@
     "experimentalDecorators": true,
     "useDefineForClassFields": true,
     "paths": {
-      "@components/*": ["./components/*"],
+      "@components/*": [
+        "./components/*"
+      ],
       // "@model/*": ["./model/*"]
     }
   },
   "include": [
     "src",
-    "**/*.ts", "**/*.tsx"
+    "**/*.ts",
+    "**/*.tsx"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }
