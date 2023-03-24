@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react'
 import G6, { Legend } from '@antv/g6';
 import React, { useEffect, useRef, useState } from 'react'
-import insertCss from 'insert-css';
+// import insertCss from 'insert-css';
 import domainData from "../../../../mockDate/domainData.json"
 import { Col, Divider, Drawer, Row } from 'antd';
 
@@ -117,6 +117,7 @@ const legendData = {
 const DomainGragh: React.FC = observer((props: any) => {
   const graghRef = useRef<any>()
 
+  const nodeName:any = props.searchNodeName
   //存储上一次的结果跟最新的搜索结果
   //旧的搜索值
   const [preSearchValue, setPreSearchValue] = useState<string>('')
@@ -127,13 +128,14 @@ const DomainGragh: React.FC = observer((props: any) => {
 
   //对搜索节点的新旧值进行转换函数
   const FromNewToOld = () => {
+    console.log(preSearchValue,props.searchNodeName)
 
     if (newSearchValue.toUpperCase() === props.searchNodeName.toUpperCase()) {
       return
     }
     else {
       setPreSearchValue(newSearchValue)
-      setNewSearchValue(props.searchNodeName)
+      setNewSearchValue(nodeName)
     }
 
     console.log(preSearchValue, newSearchValue)
@@ -215,7 +217,7 @@ const DomainGragh: React.FC = observer((props: any) => {
 
     setTimeout(() => {
       findNode = graph.find('node', (node: any) => {
-        return node.get('model').name == value;
+        return node.get('model').name === value;
 
       });
       console.log(findNode)

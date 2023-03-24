@@ -1,10 +1,28 @@
-import React, { useEffect, useRef ,useState} from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import G6 from "@antv/g6";
-import { Col, Form, Row, Input, Cascader, Button, Card,Drawer, Space } from "antd";
-import { AudioOutlined ,PoweroffOutlined} from "@ant-design/icons";
+import {
+  Col,
+  Form,
+  Row,
+  Input,
+  Cascader,
+  Button,
+  Card,
+  Drawer,
+  Space,
+  Divider,
+  AutoComplete,
+  message,
+} from "antd";
+import { PoweroffOutlined } from "@ant-design/icons";
 import styled from "styled-components";
-import { title } from "process";
+// import { data } from "../../../../component/homeIndex/Graph/data";
+import data  from '../../../../mockDate/realdatacertify.json'
+// import { setTimeout } from "timers";
+// import { title } from "process";
 const { Search } = Input;
+
+let inputNodeValue: string[] = [];
 
 interface Option {
   value: string | number;
@@ -49,14 +67,101 @@ const onChange = (value: any) => {
   console.log(value);
 };
 
+let graph: any = null;
+
 export default function SearchGragh(props: any) {
   const graphRef: any = useRef();
   const formRef: any = useRef();
-  const buttonRef:any = useRef();
-  const [nodeInfo, setNodeInfo] = useState<any[]>([])
+  const buttonRef: any = useRef();
+  const [nodeInfo, setNodeInfo] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [loadings, setLoadings] = useState<boolean[]>([]);
   const onSearch = (value: string) => console.log(value);
+
+  const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
+
+  const [nodeValueOne, setNodeValueOne] = useState("");
+  const [nodeValueTwo, setNodeValueTwo] = useState("");
+  const [optionsNode1, setOptionsNode1] = useState<{ value: string }[]>([]);
+  const [optionsNode2, setOptionsNode2] = useState<{ value: string }[]>([]);
+
+  const mockVal = (str: string, repeat = 1) => ({
+    value: str.repeat(repeat),
+  });
+
+  const onNodePathSearch1 = (searchText: string) => {
+    setOptionsNode1(
+      !searchText
+        ? []
+        : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)]
+    );
+  };
+
+  const onNodePathSearch2 = (searchText: string) => {
+    setOptionsNode2(
+      !searchText
+        ? []
+        : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)]
+    );
+  };
+
+  const onNodePathSelect1 = (data: string) => {
+    console.log("onSelect", data);
+  };
+
+  const onNodePathSelect2 = (data: string) => {
+    console.log("onSelect", data);
+  };
+
+  const onNodePathChange1 = useCallback((data: string) => {
+    console.log(typeof data);
+
+    graph.getNodes().forEach((node:any)=>{
+      // console.log(node)
+      if(node._cfg.model.name === data)
+      inputNodeValue[0] = node._cfg.model.id
+      console.log(inputNodeValue)
+    })
+
+    // let findNodeId = graph.findByN(data);
+
+    // if (findNodeId) {
+    //   console.log(findNodeId, [...selectedNodeIds, findNodeId.getID()]);
+    //   let selectNode: string[] = [...selectedNodeIds];
+    //   // console.log(selectNode)
+    //   selectNode[0] = findNodeId.getID();
+    //   inputNodeValue[0] = findNodeId.getID();
+    //   // console.log(selectNode)
+    //   setSelectedNodeIds(selectNode);
+    //   // setSelectedNodeIds
+    //   //      setTimeout(()=>{
+    //   //   console.log(selectedNodeIds)
+    //   //  },5000)
+    // }
+
+    setNodeValueOne(data);
+  }, []);
+
+  const onNodePathChange2 = (data: string) => {
+    graph.getNodes().forEach((node:any)=>{
+      if(node._cfg.model.name === data)
+      inputNodeValue[1] = node._cfg.model.id
+      console.log(inputNodeValue)
+    })
+    // let findNodeId = graph.findById(encodeURI(data));
+
+    // if (findNodeId) {
+    //   console.log(findNodeId);
+    //   let selectNode: string[] = [...selectedNodeIds];
+    //   selectNode[1] = findNodeId.getID();
+    //   inputNodeValue[1] = findNodeId.getID();
+
+    //   console.log(inputNodeValue);
+    //   setSelectedNodeIds(selectNode);
+    // }
+    // setNodeValueOne(data);
+    setNodeValueTwo(data);
+  };
 
   const showDrawer = () => {
     setOpen(true);
@@ -86,14 +191,14 @@ export default function SearchGragh(props: any) {
   };
 
   const enterLoading = (index: number) => {
-    setLoadings(prevLoadings => {
+    setLoadings((prevLoadings) => {
       const newLoadings = [...prevLoadings];
       newLoadings[index] = true;
       return newLoadings;
     });
 
     setTimeout(() => {
-      setLoadings(prevLoadings => {
+      setLoadings((prevLoadings) => {
         const newLoadings = [...prevLoadings];
         newLoadings[index] = false;
         return newLoadings;
@@ -106,10 +211,17 @@ export default function SearchGragh(props: any) {
     const width = container.scrollWidth;
     const height = (container.scrollHeight || 500) - 40;
 
-    const graph = new G6.Graph({
+    if (graph) {
+      graph.destroy();
+    }
+
+    graph = new G6.Graph({
       container: graphRef.current,
       width,
       height,
+      layout: {
+        type: "force",
+      },
       linkCenter: true,
       animate: true,
       modes: {
@@ -117,87 +229,91 @@ export default function SearchGragh(props: any) {
       },
       fitView: true,
     });
-    fetch(
-      "https://gw.alipayobjects.com/os/bmw-prod/b0ca4b15-bd0c-43ec-ae41-c810374a1d55.json"
-    ).then((res) => res.json())
-      .then((data) => {
-        const clearStates = () => {
-          graph.getNodes().forEach((node) => {
-            graph.clearItemStates(node);
-          });
-          graph.getEdges().forEach((edge) => {
-            graph.clearItemStates(edge);
-          });
-        };
 
-        graph.on("canvas:click", (e) => {
-          clearStates();
-        });
-
-        graph.data(data);
-        graph.render();
-
-       
-        buttonRef.current.addEventListener("click", (e:any) => {
-          const selectedNodes = graph.findAllByState("node", "selected");
-
-          console.log(selectedNodes)
-          let nodeInfoList:any[] =[]
-          selectedNodes.forEach( (item,index) => {
-            let selectNode = {id:item._cfg?.id}
-            nodeInfoList.push(selectNode)
-
-          })
-
-          setTimeout(()=>{
-         
-          console.log(nodeInfo)
-         },1000)
-
-         setNodeInfo([...nodeInfoList])
-
-         console.log(nodeInfo)
-
-          if (selectedNodes.length !== 2) {
-            alert("Please select TWO nodes!\n\r请选择有且两个节点！");
-            return;
-          }
-          clearStates();
-          const { findShortestPath } = G6.Algorithm as any ;
-          // path 为其中一条最短路径，allPath 为所有的最短路径
-          const { path, allPath } = findShortestPath(
-            data,
-            selectedNodes[0].getID(),
-            selectedNodes[1].getID()
-          );
-
-          const pathNodeMap:any = {};
-          path.forEach((id:any) => {
-            const pathNode = graph.findById(id);
-            pathNode.toFront();
-            graph.setItemState(pathNode, "highlight", true);
-            pathNodeMap[id] = true;
-          });
-          graph.getEdges().forEach((edge) => {
-            const edgeModel = edge.getModel();
-            const source = edgeModel.source;
-            const target = edgeModel.target;
-            const sourceInPathIdx = path.indexOf(source);
-            const targetInPathIdx = path.indexOf(target);
-            if (sourceInPathIdx === -1 || targetInPathIdx === -1) return;
-            if (Math.abs(sourceInPathIdx - targetInPathIdx) === 1) {
-              graph.setItemState(edge, "highlight", true);
-            } else {
-              graph.setItemState(edge, "inactive", true);
-            }
-          });
-          graph.getNodes().forEach((node) => {
-            if (!pathNodeMap[node.getID()]) {
-              graph.setItemState(node, "inactive", true);
-            }
-          });
-        });
+    const clearStates = () => {
+      graph.getNodes().forEach((node) => {
+        graph.clearItemStates(node);
       });
+      graph.getEdges().forEach((edge) => {
+        graph.clearItemStates(edge);
+      });
+    };
+
+    graph.on("canvas:click", (e) => {
+      clearStates();
+    });
+
+    // 编码中文 ID
+    // const encodedData = {
+    //   nodes: data.nodes.map((node) => ({
+    //     ...node,
+    //     id: encodeURI(node.id),
+    //   })),
+    //   edges: data.edges.map((edge) => ({
+    //     ...edge,
+    //     source: encodeURI(edge.source),
+    //     target: encodeURI(edge.target),
+    //   })),
+    // };
+
+    graph.data(
+      // {
+      // nodes: data.nodes,
+      // edges: data.links.map(function (edge: any, i: any) {
+      //   edge.id = 'edge' + i;
+      //   return Object.assign({}, edge);
+      // })}
+      data
+    );
+
+    graph.render();
+
+    buttonRef.current.addEventListener("click", (e: any) => {
+      console.log(selectedNodeIds);
+
+      if (inputNodeValue.length !== 2) {
+        alert("Please select TWO nodes!\n\r请选择有且两个节点！");
+        return;
+      }
+      clearStates();
+      const { findShortestPath } = G6.Algorithm as any;
+      // path 为其中一条最短路径，allPath 为所有的最短路径
+      const { path, allPath } = findShortestPath(
+        data,
+        inputNodeValue[0],
+        inputNodeValue[1]
+        // encodeURI(inputNodeValue[0]),
+        // encodeURI(inputNodeValue[1])
+      );
+
+      console.log(path);
+
+      const pathNodeMap: any = {};
+      path.forEach((id: any) => {
+        const pathNode = graph.findById(id);
+        pathNode.toFront();
+        graph.setItemState(pathNode, "highlight", true);
+        pathNodeMap[id] = true;
+      });
+      graph.getEdges().forEach((edge) => {
+        const edgeModel = edge.getModel();
+        const source = edgeModel.source;
+        const target = edgeModel.target;
+        const sourceInPathIdx = path.indexOf(source);
+        const targetInPathIdx = path.indexOf(target);
+        if (sourceInPathIdx === -1 || targetInPathIdx === -1) return;
+        if (Math.abs(sourceInPathIdx - targetInPathIdx) === 1) {
+          graph.setItemState(edge, "highlight", true);
+        } else {
+          graph.setItemState(edge, "inactive", true);
+        }
+      });
+      graph.getNodes().forEach((node) => {
+        if (!pathNodeMap[node.getID()]) {
+          graph.setItemState(node, "inactive", true);
+        }
+      });
+    });
   }, []);
 
   return (
@@ -238,26 +354,60 @@ export default function SearchGragh(props: any) {
             </Col>
           </Row>
         </Form>
+        <Divider />
+        <Form layout={"inline"}>
+          <Form.Item label="实体1">
+            <AutoComplete
+              value={nodeValueOne}
+              options={optionsNode1}
+              style={{ width: 200 }}
+              onSelect={onNodePathSelect1}
+              onSearch={onNodePathSearch1}
+              onChange={onNodePathChange1}
+              placeholder="请输入实体名"
+            ></AutoComplete>
+          </Form.Item>
+          <Form.Item label="实体2">
+            <AutoComplete
+              value={nodeValueTwo}
+              options={optionsNode2}
+              style={{ width: 200 }}
+              onSelect={onNodePathSelect2}
+              onSearch={onNodePathSearch2}
+              onChange={onNodePathChange2}
+              placeholder="请输入实体名"
+            ></AutoComplete>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" ref={buttonRef}>
+              查找实体最短路径
+            </Button>
+          </Form.Item>
+        </Form>
       </Card>
-      <Card style={{ marginTop: "20px" } }>
+      <Card style={{ marginTop: "20px" }}>
         <GraphContainer ref={graphRef}>
-        
-       <Space size={8}>
-       <Button
-          ref={buttonRef}
-          type="primary"
-          icon={<PoweroffOutlined />}
-          loading={loadings[1]}
-          onClick={() => enterLoading(1)}
-        >
-          点击查找最短路径
-        </Button>
-        <Button type="primary" onClick={()=>{showDrawer()}}>查看所选节点信息</Button>
-       </Space>
+          <Space size={8}>
+            <Button
+              type="primary"
+              onClick={() => {
+                showDrawer();
+              }}
+            >
+              查看所选节点信息
+            </Button>
+          </Space>
         </GraphContainer>
-        <Drawer title="节点信息" width={720} placement="right" onClose={onClose} open={open}>
-         { Array.from(nodeInfo).map((item,index)=> <div key={index}>{item.id}</div>
-         )}
+        <Drawer
+          title="节点信息"
+          width={720}
+          placement="right"
+          onClose={onClose}
+          open={open}
+        >
+          {Array.from(nodeInfo).map((item, index) => (
+            <div key={index}>{item.id}</div>
+          ))}
         </Drawer>
       </Card>
     </div>

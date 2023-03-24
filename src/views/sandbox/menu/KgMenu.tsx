@@ -27,19 +27,22 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem('首页', '/home', <MailOutlined />),
-  getItem('Search', '/home/kgsearch', <CalendarOutlined />),
+  // getItem('Search', '/home/kgsearch', <CalendarOutlined />),
   getItem('Navigation Two', 'sub1', <AppstoreOutlined />, [
     getItem('搜索图', '/home/searchgragh'),
     getItem('地点查询', '/home/classification'),
+    getItem('空间文本分析', '/home/exactor'),
+    getItem('实体最短路径查询', "/home/searchshortpath"),
     getItem('Submenu', 'sub1-2', null, [getItem('Option 5', '5'), getItem('Option 6', '6')]),
   ]),
   getItem('算法', 'sub2', <SettingOutlined />, [
     getItem('知识图扩展', '/home/extensiongrangh'),
     getItem('更改图谱', '/home/domainmap'),
     getItem('实验性组件', '/home/trycoponent'),
-    getItem('算法2', '10'),
-    getItem('算法3', '11'),
-    getItem('算法4', '12'),
+    getItem('expandNode', '/home/wordclouds'),
+    getItem('筛选实体', '/home/shortestpath'),
+    getItem('图例', '/home/experiment'),
+    getItem('词云', '/home/wordsclounds'),
   ]),
 
 ];
